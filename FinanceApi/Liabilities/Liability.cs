@@ -8,12 +8,12 @@ public class Liability
   [BsonId]
   [BsonRepresentation(BsonType.ObjectId)]
   public string? Id { get; set; }
-  public User User { get; set; } = null!;
 
+  [BsonRepresentation(BsonType.ObjectId)]
+  public String User { get; set; } = null!;
   [BsonElement("Name")]
   public string Name { get; set; } = null!;
   public decimal Amount { get; set; }
-
   public bool Recurring { get; set; } = false;
   public bool Active { get; set; } = true;
   public List<string> Tags { get; set; } = new List<string>();

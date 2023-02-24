@@ -1,0 +1,19 @@
+{
+  "FinanceDatabase": {
+    "ConnectionString": "mongodb://api:sisma@localhost:3456",
+    "DatabaseName": "Finance",
+    "LiabilitiesCollectionName": "Liabilities",
+    "UsersCollectionName": "Users"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "Auth0": {
+    "Domain": "${AUTH0_DOMAIN}",
+    "Audience": "${AUTH0_AUDIENCE}"
+  },
+  "AllowedHosts": "*"
+}

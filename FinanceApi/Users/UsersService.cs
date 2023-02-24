@@ -15,14 +15,17 @@ public class UsersService
     var mongoClient = new MongoClient(
       financeDatabaseSettings.Value.ConnectionString);
 
+
     var mongoDatabase = mongoClient.GetDatabase(
-      financeDatabaseSettings.Value.DatabaseName);
+    financeDatabaseSettings.Value.DatabaseName);
+
 
     _usersCollection = mongoDatabase.GetCollection<User>(
      financeDatabaseSettings.Value.UsersCollectionName);
   }
   public async Task<List<User>> GetUsersAsync() =>
   await _usersCollection.Find(_ => true).ToListAsync();
+
 
   public async Task<User> CreateUserAsync(User user)
   {
@@ -32,7 +35,6 @@ public class UsersService
 
   public async Task<User> GetUserAsync(string id) =>
     await _usersCollection.Find(user => user.Id == id).FirstOrDefaultAsync();
-
 
 
 

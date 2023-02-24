@@ -1,5 +1,6 @@
 using FinanceApi.Models;
 using FinanceApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceApi.Controllers;
@@ -15,11 +16,14 @@ public class UsersController : ControllerBase
 
 
   [HttpGet]
-  public async Task<List<User>> Get() =>
-    await _userService.GetUsersAsync();
+  [Authorize]
+  public async Task<List<User>> Get()
+  {
+    return await _userService.GetUsersAsync();
+  }
 
   [HttpGet("{id:length(24)}")]
-  public async Task<ActionResult<User>> Get(string id)
+  public async Task<ActionResult<User>> GetUserById(string id)
   {
     var user = await _userService.GetUserAsync(id);
     if (user == null)
@@ -28,6 +32,7 @@ public class UsersController : ControllerBase
     }
     return user;
   }
+
 
 
   [HttpPost]
