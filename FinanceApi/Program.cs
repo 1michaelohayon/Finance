@@ -1,6 +1,8 @@
 using FinanceApi.Models;
+using FinanceApi.Middleware;
 using FinanceApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,6 +62,9 @@ if (app.Environment.IsDevelopment())
   app.UseSwagger();
   app.UseSwaggerUI();
 }
+
+
+app.UseMiddleware<RequestLoggingMiddleware>();
 
 app.UseCors("AllowAllOrigins");
 
