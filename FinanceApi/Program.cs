@@ -62,7 +62,7 @@ if (app.Environment.IsDevelopment())
   app.UseSwaggerUI();
 }
 
-
+app.UseMiddleware<DecodedJWT>();
 app.UseMiddleware<RequestLoggingMiddleware>();
 
 app.UseCors("AllowAllOrigins");

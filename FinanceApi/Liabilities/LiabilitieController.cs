@@ -1,3 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using FinanceApi.Models;
 using FinanceApi.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -14,9 +16,39 @@ public class LiabilitiesController : ControllerBase
   public LiabilitiesController(LiabilitiesService liabilitiesService) =>
     _liabilitiesService = liabilitiesService;
 
+
+  [Authorize]
   [HttpGet]
-  public async Task<List<Liability>> Get() =>
-    await _liabilitiesService.GetLiabilities();
+  [Authorize]
+  [HttpGet("liabilities")]
+  public async Task<ActionResult<List<Liability>>> GetLiabilities()
+  {
+    if (!HttpContext.Items.TryGetValue("UserClaims", out var userClaims))
+    {
+      Console.WriteLine("U=====================");
+      return Unauthorized("User is not authenticated or authorized");
+    }
+    else
+    {
+      var claims = userClaims as List<Claim>;
+
+      Console.WriteLine($"Decoded token: {claims} ...");
+
+      string? userId = claims.First(c => c.Type == "sub").Value;
+
+
+      Console.WriteLine($"Decoded token: {userId} ...");
+
+      var liabilities = await _liabilitiesService.GetUserLiabilities(userId);
+
+      return Ok(liabilities);
+
+    }
+
+
+  }
+
+
 
   [HttpGet("{id:length(24)}")]
   public async Task<ActionResult<Liability>> Get(string id)
@@ -45,9 +77,6 @@ public class LiabilitiesController : ControllerBase
   [HttpPost]
   public async Task<ActionResult<Liability>> Create(Liability liability)
   {
-    Console.WriteLine("====================================");
-    Console.WriteLine(liability);
-    Console.WriteLine("====================================");
     await _liabilitiesService.CreateLiability(liability);
     return CreatedAtAction(nameof(Get), new { id = liability.Id }, liability);
   }
