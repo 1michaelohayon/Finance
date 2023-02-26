@@ -6,15 +6,21 @@ import { useState } from "react";
 import liabilitiesService from "./services/liabilities";
 import usersService from "./services/users";
 import LoginButton from "./componenets/login";
+import useField from "./hooks/useField";
+import CreateLiability from "./componenets/ CreateLiability";
 
 function App() {
   const [users, setUsers] = useState([]);
   const [liabilities, setLiabilities] = useState([]);
-  const { getAccessTokenSilently } = useAuth0();
+  const [liab, setLiability] = useState("");
+
+  const searchById = useField("text");
+  const { getAccessTokenSilently, getIdTokenClaims } = useAuth0();
 
   const handleClick = async () => {
     const token = await getAccessTokenSilently();
-    console.log(token);
+    const claims = await getIdTokenClaims();
+    console.log("claims", claims);
     const users = await usersService.getAll(token);
     setUsers(users);
     console.log(users);
@@ -24,6 +30,14 @@ function App() {
     const liabilities = await liabilitiesService.getAll();
     setLiabilities(liabilities);
     console.log(liabilities);
+  };
+
+  const searchByIdClick = async () => {
+    const liability = await liabilitiesService.getByUserId(
+      searchById.input.value
+    );
+    setLiability(liability.name);
+    console.log(liability);
   };
 
   return (
@@ -54,7 +68,12 @@ function App() {
             <div key={l.id}>{l.name}</div>
           ))}
         </div>
+
+        <input {...searchById.input} />
+        <button onClick={() => searchByIdClick()}>search by id</button>
+        {liab}
       </header>
+      <CreateLiability />
     </div>
   );
 }

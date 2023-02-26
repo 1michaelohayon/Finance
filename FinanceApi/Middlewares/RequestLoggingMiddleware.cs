@@ -18,16 +18,22 @@ namespace FinanceApi.Middleware
       // Log the request details
       Console.WriteLine($"{request.Method} {request.Path} ");
 
+      //header details
+      //foreach (var header in request.Headers)
+      //{
+      //  Console.WriteLine($"{header.Key}: {header.Value}");
+      //}
+
       // Log the request body if it exists
-      if (request.ContentLength != null && request.ContentLength > 0)
-      {
-        var bodyStream = new MemoryStream();
-        await request.Body.CopyToAsync(bodyStream);
-        bodyStream.Seek(0, SeekOrigin.Begin);
-        var bodyText = await new StreamReader(bodyStream).ReadToEndAsync();
-        Console.WriteLine($"Body: {bodyText}");
-        request.Body.Seek(0, SeekOrigin.Begin);
-      }
+      //if (request.ContentLength != null && request.ContentLength > 0)
+      //{
+      //  var bodyStream = new MemoryStream();
+      //  await request.Body.CopyToAsync(bodyStream);
+      //  bodyStream.Seek(0, SeekOrigin.Begin);
+      //  var bodyText = await new StreamReader(bodyStream).ReadToEndAsync();
+      //  Console.WriteLine($"Body: {bodyText}");
+      //  request.Body.Seek(0, SeekOrigin.Begin);
+      //}
 
       await _next(context);
     }

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Liability, NewLiability } from "../types";
 const baseUrl = process.env.REACT_APP_API_SERVER_URL;
 const liabilitiesUrl = `${baseUrl}/api/liabilities`;
 
@@ -12,7 +13,7 @@ const getByUserId = async (id: any) => {
   return response.data;
 };
 
-const create = async (newObject: any) => {
+const create = async (newObject: NewLiability) => {
   const response = await axios.post(liabilitiesUrl, newObject);
   return response.data;
 };

@@ -1,5 +1,6 @@
 using FinanceApi.Models;
 using FinanceApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceApi.Controllers;
@@ -15,12 +16,12 @@ public class LiabilitiesController : ControllerBase
 
   [HttpGet]
   public async Task<List<Liability>> Get() =>
-    await _liabilitiesService.GetLiabilitiesAsync();
+    await _liabilitiesService.GetLiabilities();
 
   [HttpGet("{id:length(24)}")]
   public async Task<ActionResult<Liability>> Get(string id)
   {
-    var liability = await _liabilitiesService.GetLiabilityAsync(id);
+    var liability = await _liabilitiesService.GetLiability(id);
     if (liability == null)
     {
       return NotFound();
@@ -31,7 +32,7 @@ public class LiabilitiesController : ControllerBase
   [HttpGet("user/{id:length(24)}")]
   public async Task<ActionResult<List<Liability>>> GetByUser(string id)
   {
-    var liabilities = await _liabilitiesService.GetUserLiabilitiesAsync(id);
+    var liabilities = await _liabilitiesService.GetUserLiabilities(id);
     if (liabilities == null)
     {
       return NotFound();
@@ -40,40 +41,38 @@ public class LiabilitiesController : ControllerBase
   }
 
 
-
+  //[Authorize]
   [HttpPost]
   public async Task<ActionResult<Liability>> Create(Liability liability)
   {
-    if (liability.User == null)
-    {
-      return BadRequest("User is required");
-    }
-
-    await _liabilitiesService.CreateLiabilityAsync(liability);
+    Console.WriteLine("====================================");
+    Console.WriteLine(liability);
+    Console.WriteLine("====================================");
+    await _liabilitiesService.CreateLiability(liability);
     return CreatedAtAction(nameof(Get), new { id = liability.Id }, liability);
   }
 
   [HttpPut("{id:length(24)}")]
   public async Task<IActionResult> Update(string id, Liability liability)
   {
-    var liabilityFromDb = await _liabilitiesService.GetLiabilityAsync(id);
+    var liabilityFromDb = await _liabilitiesService.GetLiability(id);
     if (liabilityFromDb == null)
     {
       return NotFound();
     }
-    await _liabilitiesService.UpdateLiabilityAsync(id, liability);
+    await _liabilitiesService.UpdateLiability(id, liability);
     return NoContent();
   }
 
   [HttpDelete("{id:length(24)}")]
   public async Task<IActionResult> Delete(string id)
   {
-    var liabilityFromDb = await _liabilitiesService.GetLiabilityAsync(id);
+    var liabilityFromDb = await _liabilitiesService.GetLiability(id);
     if (liabilityFromDb == null)
     {
       return NotFound();
     }
-    await _liabilitiesService.RemoveLiabilityAsync(id);
+    await _liabilitiesService.RemoveLiability(id);
     return NoContent();
   }
 }

@@ -8,9 +8,7 @@ public class Liability
   [BsonId]
   [BsonRepresentation(BsonType.ObjectId)]
   public string? Id { get; set; }
-
-  [BsonRepresentation(BsonType.ObjectId)]
-  public String User { get; set; } = null!;
+  public User User { get; set; } = null!;
   [BsonElement("Name")]
   public string Name { get; set; } = null!;
   public decimal Amount { get; set; }
@@ -19,7 +17,7 @@ public class Liability
   public List<string> Tags { get; set; } = new List<string>();
   public decimal InterestRate { get; set; }
   public decimal MinimumPayment { get; set; }
-  public DateTime PaymentStartDate { get; set; }
-  public DateTime PaymentEndDate { get; set; }
-  public DateTime PaymentDueDate { get; set; }
+  private DateTime PaymentStartDate { get; set; }
+  private DateTime PaymentEndDate { get; set; }
+  private DateTime PaymentDueDate { get; set; }
 }

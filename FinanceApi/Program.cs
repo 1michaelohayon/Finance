@@ -10,7 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<FinanceDatabaseSettings>(
     builder.Configuration.GetSection("FinanceDatabase"));
 
-builder.Services.AddSingleton<UsersService>();
 builder.Services.AddSingleton<LiabilitiesService>();
 
 builder.Services.AddControllers();
@@ -21,7 +20,7 @@ builder.Services.AddSwaggerGen();
 
 
 
-//cors
+//cors allow ‘Access-Control-Allow-Origin’ all post from any origin
 builder.Services.AddCors(options =>
 {
   options.AddPolicy("AllowAllOrigins",
