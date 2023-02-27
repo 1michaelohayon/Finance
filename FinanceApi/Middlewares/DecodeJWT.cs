@@ -13,7 +13,7 @@ namespace FinanceApi.Middleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-      if (context.Request.Path == "/health")
+      if (context.Request.Path.StartsWithSegments("/health"))
       {
         await _next(context);
         return;
