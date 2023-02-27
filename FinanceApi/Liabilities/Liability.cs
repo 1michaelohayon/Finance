@@ -8,7 +8,7 @@ public class Liability
   [BsonId]
   [BsonRepresentation(BsonType.ObjectId)]
   public string? Id { get; set; }
-  public User User { get; set; } = null!;
+  public string? User { get; set; } = null!;
   [BsonElement("Name")]
   public string Name { get; set; } = null!;
   public decimal Amount { get; set; }

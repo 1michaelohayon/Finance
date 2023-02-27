@@ -1,5 +1,5 @@
 import useField from "../hooks/useField";
-import { NewLiability, User } from "../types";
+import { NewLiability } from "../types";
 import { useAuth0 } from "@auth0/auth0-react";
 import parse from "../utils/parse";
 import liabilitiesService from "../services/liabilities";
@@ -11,23 +11,21 @@ const CreateLiability = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     const claims = await getIdTokenClaims();
+    console.log(claims);
     event.preventDefault();
-    const user: User = {
-      id: parse.str(claims?.sub),
-      email: parse.str(claims?.email),
-      emailVerified: parse.bool(claims?.email_verified),
-      name: parse.str(claims?.name),
-      username: parse.str(claims?.nickname),
-      picture: parse.str(claims?.picture),
-    };
+
     const newLiability: NewLiability = {
       name: name.input.value,
       amount: Number(amount.input.value),
-      user: user,
+      user: parse.str(claims?.sub),
     };
 
+    const token = parse.str(claims?.__raw);
     console.log(newLiability);
-    const returned = await liabilitiesService.create(newLiability);
+    const returned = await liabilitiesService.create({
+      liability: newLiability,
+      token,
+    });
     console.log("returned", returned);
   };
 

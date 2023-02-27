@@ -1,4 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using FinanceApi.Models;
 using FinanceApi.Services;
@@ -19,31 +18,24 @@ public class LiabilitiesController : ControllerBase
 
   [Authorize]
   [HttpGet]
-  [Authorize]
-  [HttpGet("liabilities")]
   public async Task<ActionResult<List<Liability>>> GetLiabilities()
   {
+
     if (!HttpContext.Items.TryGetValue("UserClaims", out var userClaims))
     {
-      Console.WriteLine("U=====================");
       return Unauthorized("User is not authenticated or authorized");
     }
-    else
-    {
-      var claims = userClaims as List<Claim>;
 
-      Console.WriteLine($"Decoded token: {claims} ...");
-
-      string? userId = claims.First(c => c.Type == "sub").Value;
+    var claims = userClaims as List<Claim>;
+    string? userId = claims.First(c => c.Type == "sub").Value;
 
 
-      Console.WriteLine($"Decoded token: {userId} ...");
+    Console.WriteLine($"Decoded token: {userId} ...");
 
-      var liabilities = await _liabilitiesService.GetUserLiabilities(userId);
+    var liabilities = await _liabilitiesService.GetLiabilities(userId);
 
-      return Ok(liabilities);
+    return Ok(liabilities);
 
-    }
 
 
   }
@@ -53,24 +45,32 @@ public class LiabilitiesController : ControllerBase
   [HttpGet("{id:length(24)}")]
   public async Task<ActionResult<Liability>> Get(string id)
   {
+    if (!HttpContext.Items.TryGetValue("UserClaims", out var userClaims))
+    {
+      return Unauthorized("User is not authenticated or authorized");
+    }
+    else if (id == null)
+    {
+      return BadRequest("Id is null");
+    }
+
+    var claims = userClaims as List<Claim>;
+    string? userId = claims.First(c => c.Type == "sub").Value;
+
     var liability = await _liabilitiesService.GetLiability(id);
     if (liability == null)
     {
       return NotFound();
     }
+    else if (liability.User != userId)
+    {
+      return Unauthorized("User is not authorized to access this resource");
+    }
+
+
     return liability;
   }
 
-  [HttpGet("user/{id:length(24)}")]
-  public async Task<ActionResult<List<Liability>>> GetByUser(string id)
-  {
-    var liabilities = await _liabilitiesService.GetUserLiabilities(id);
-    if (liabilities == null)
-    {
-      return NotFound();
-    }
-    return liabilities;
-  }
 
 
   //[Authorize]
@@ -82,25 +82,63 @@ public class LiabilitiesController : ControllerBase
   }
 
   [HttpPut("{id:length(24)}")]
-  public async Task<IActionResult> Update(string id, Liability liability)
+  public async Task<IActionResult> Update(Liability liability)
   {
-    var liabilityFromDb = await _liabilitiesService.GetLiability(id);
+    if (liability.Id == null)
+    {
+      return BadRequest();
+    }
+    var liabilityFromDb = await _liabilitiesService.GetLiability(liability.Id);
     if (liabilityFromDb == null)
     {
-      return NotFound();
+      return NotFound("Not found or no longer exist");
     }
-    await _liabilitiesService.UpdateLiability(id, liability);
+
+    if (!HttpContext.Items.TryGetValue("UserClaims", out var userClaims))
+    {
+      return Unauthorized("User is not authenticated or authorized");
+    }
+
+    var claims = userClaims as List<Claim>;
+    string? userId = claims.First(c => c.Type == "sub").Value;
+    if (liabilityFromDb.User != userId)
+    {
+      return Unauthorized("User is not authorized to access this resource");
+    }
+
+    // update function here
+
+    await _liabilitiesService.UpdateLiability(liability);
     return NoContent();
   }
+
+
 
   [HttpDelete("{id:length(24)}")]
   public async Task<IActionResult> Delete(string id)
   {
-    var liabilityFromDb = await _liabilitiesService.GetLiability(id);
-    if (liabilityFromDb == null)
+    if (!HttpContext.Items.TryGetValue("UserClaims", out var userClaims))
+    {
+      return Unauthorized("User is not authenticated or authorized");
+    }
+    if (id == null)
+    {
+      return BadRequest("Id is null");
+    }
+
+    var claims = userClaims as List<Claim>;
+    string? userId = claims.First(c => c.Type == "sub").Value;
+
+    var liability = await _liabilitiesService.GetLiability(id);
+    if (liability == null)
     {
       return NotFound();
     }
+    if (liability.User != userId)
+    {
+      return Unauthorized("User is not authorized to access this resource");
+    }
+
     await _liabilitiesService.RemoveLiability(id);
     return NoContent();
   }

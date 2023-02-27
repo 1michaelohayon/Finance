@@ -24,45 +24,35 @@ public class LiabilitiesService
   }
 
 
-  public async Task<List<Liability>> GetLiabilities() =>
-    await _liabilitiesCollection.Find(_ => true).ToListAsync();
-
-
-
+  //get single liablity with mongodb id from the user's liabilities
   public async Task<Liability> GetLiability(string id) =>
+
     await _liabilitiesCollection.Find(liability => liability.Id == id).FirstOrDefaultAsync();
 
 
-
-  public async Task<List<Liability>> GetUserLiabilities(string id) =>
-    await _liabilitiesCollection.Find(liability => liability.User.Id == id).ToListAsync();
-
-
-
+  //get user's liabilities
+  public async Task<List<Liability>> GetLiabilities(string id) =>
+    await _liabilitiesCollection.Find(liability => liability.User == id).ToListAsync();
 
 
   public async Task<Liability> CreateLiability(Liability liability)
   {
-
     if (liability.User == null)
     {
       throw new Exception("User not found");
     }
-
     await _liabilitiesCollection.InsertOneAsync(liability);
-
     return liability;
   }
 
 
 
+  //updates liability
+  public async Task UpdateLiability(Liability liability) =>
+    await _liabilitiesCollection.ReplaceOneAsync(liability => liability.Id == liability.Id, liability);
 
 
-  public async Task UpdateLiability(string id, Liability liability) =>
-    await _liabilitiesCollection.ReplaceOneAsync(liability => liability.Id == id, liability);
-
-
-
+  // delete liability
   public async Task RemoveLiability(string id) =>
     await _liabilitiesCollection.DeleteOneAsync(liability => liability.Id == id);
 

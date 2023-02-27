@@ -4,40 +4,20 @@ import "./App.css";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useState } from "react";
 import liabilitiesService from "./services/liabilities";
-import usersService from "./services/users";
 import LoginButton from "./componenets/login";
 import useField from "./hooks/useField";
 import CreateLiability from "./componenets/ CreateLiability";
 
 function App() {
-  const [users, setUsers] = useState([]);
   const [liabilities, setLiabilities] = useState([]);
-  const [liab, setLiability] = useState("");
 
-  const searchById = useField("text");
-  const { getAccessTokenSilently, getIdTokenClaims } = useAuth0();
-
-  const handleClick = async () => {
-    const token = await getAccessTokenSilently();
-    const claims = await getIdTokenClaims();
-    console.log("claims", claims);
-    const users = await usersService.getAll(token);
-    setUsers(users);
-    console.log(users);
-  };
+  const { getAccessTokenSilently } = useAuth0();
 
   const handleLiabilitiesClick = async () => {
-    const liabilities = await liabilitiesService.getAll();
+    const token = await getAccessTokenSilently();
+    const liabilities = await liabilitiesService.getAll(token);
     setLiabilities(liabilities);
     console.log(liabilities);
-  };
-
-  const searchByIdClick = async () => {
-    const liability = await liabilitiesService.getByUserId(
-      searchById.input.value
-    );
-    setLiability(liability.name);
-    console.log(liability);
   };
 
   return (
@@ -56,22 +36,15 @@ function App() {
           Learn React
         </a>
         <LoginButton />
-        <button onClick={() => handleClick()}>click me</button>
-        <div>
-          {users.map((u: any) => (
-            <div key={u.id}>{u.username}</div>
-          ))}
-        </div>
-        <button onClick={() => handleLiabilitiesClick()}>click me2</button>
+
+        <button onClick={() => handleLiabilitiesClick()}>
+          Get liabilities
+        </button>
         <div>
           {liabilities.map((l: any) => (
             <div key={l.id}>{l.name}</div>
           ))}
         </div>
-
-        <input {...searchById.input} />
-        <button onClick={() => searchByIdClick()}>search by id</button>
-        {liab}
       </header>
       <CreateLiability />
     </div>

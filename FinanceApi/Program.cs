@@ -62,16 +62,17 @@ if (app.Environment.IsDevelopment())
   app.UseSwaggerUI();
 }
 
-app.UseMiddleware<DecodedJWT>();
-app.UseMiddleware<RequestLoggingMiddleware>();
+app.UseHttpsRedirection();
 
 app.UseCors("AllowAllOrigins");
 
-app.MapControllers();
-app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<DecodedJWT>();
+app.UseMiddleware<RequestLoggingMiddleware>();
+
+app.MapControllers();
 
 
 app.Run();

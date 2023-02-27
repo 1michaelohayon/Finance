@@ -44,6 +44,15 @@ namespace FinanceApi.Middleware
         var handler = new JwtSecurityTokenHandler();
         var decodedToken = handler.ReadJwtToken(token);
         context.Items["UserClaims"] = decodedToken.Claims.ToList();
+        Console.WriteLine("passed");
+        Console.WriteLine($"Decoded token: {decodedToken.Claims} ...");
+
+        //console write line all the claims
+        foreach (var claim in decodedToken.Claims)
+        {
+          Console.WriteLine($"Claim: {claim.Type} - {claim.Value}");
+        }
+
 
         await _next(context);
       }

@@ -1,20 +1,39 @@
 import axios from "axios";
 import { Liability, NewLiability } from "../types";
 const baseUrl = process.env.REACT_APP_API_SERVER_URL;
-const liabilitiesUrl = `${baseUrl}/api/liabilities`;
+const liabilitiesUrl = `${baseUrl}/api/Liabilities`;
 
-const getAll = async () => {
-  const response = await axios.get(liabilitiesUrl);
+const getAll = async (token: string) => {
+  console.log(token);
+  const config = {
+    headers: {
+      "content-type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const response = await axios.get(liabilitiesUrl, config);
   return response.data;
 };
 
-const getByUserId = async (id: any) => {
-  const response = await axios.get(`${liabilitiesUrl}/user/${id}`);
-  return response.data;
-};
+interface CreateLiab {
+  liability: NewLiability;
+  token: string;
+}
 
-const create = async (newObject: NewLiability) => {
-  const response = await axios.post(liabilitiesUrl, newObject);
+const create = async (createLiab: CreateLiab) => {
+  const config = {
+    headers: {
+      "content-type": "application/json",
+      Authorization: `Bearer ${createLiab.token}`,
+    },
+  };
+
+  const response = await axios.post(
+    liabilitiesUrl,
+    createLiab.liability,
+    config
+  );
   return response.data;
 };
 
@@ -28,6 +47,6 @@ const remove = async (id: any) => {
   return response.data;
 };
 
-const liabilitiesService = { getAll, getByUserId, create, update, remove };
+const liabilitiesService = { getAll, create, update, remove };
 
 export default liabilitiesService;
