@@ -10,4 +10,4 @@ export interface Liability {
   minimumPayment?: number;
 }
 
-export type NewLiability = Omit<Liability, "id">;
+export type NewLiability = Omit<Liability, "id" | "user">;

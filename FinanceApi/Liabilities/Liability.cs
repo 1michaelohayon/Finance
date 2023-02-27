@@ -13,11 +13,9 @@ public class Liability
   public string Name { get; set; } = null!;
   public decimal Amount { get; set; }
   public bool Recurring { get; set; } = false;
-  public bool Active { get; set; } = true;
+  public bool Active { get; set; } = false;
   public List<string> Tags { get; set; } = new List<string>();
   public decimal InterestRate { get; set; }
-  public decimal MinimumPayment { get; set; }
-  private DateTime PaymentStartDate { get; set; }
-  private DateTime PaymentEndDate { get; set; }
-  private DateTime PaymentDueDate { get; set; }
+  public DateTime PaymentStart { get; set; }
+  public DateTime PaymentEnd { get; set; }
 }

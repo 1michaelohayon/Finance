@@ -56,5 +56,8 @@ public class LiabilitiesService
   public async Task RemoveLiability(string id) =>
     await _liabilitiesCollection.DeleteOneAsync(liability => liability.Id == id);
 
+  // removes all the liabilities of a user
+  public async Task RemoveAllLiabilities(string id) =>
+    await _liabilitiesCollection.DeleteManyAsync(liability => liability.User == id);
 
 }

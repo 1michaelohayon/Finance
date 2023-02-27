@@ -7,20 +7,17 @@ import liabilitiesService from "../services/liabilities";
 const CreateLiability = () => {
   const name = useField("text");
   const amount = useField("number");
-  const { getIdTokenClaims } = useAuth0();
+  const { getAccessTokenSilently } = useAuth0();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    const claims = await getIdTokenClaims();
-    console.log(claims);
     event.preventDefault();
 
     const newLiability: NewLiability = {
       name: name.input.value,
       amount: Number(amount.input.value),
-      user: parse.str(claims?.sub),
     };
 
-    const token = parse.str(claims?.__raw);
+    const token = parse.str(await getAccessTokenSilently());
     console.log(newLiability);
     const returned = await liabilitiesService.create({
       liability: newLiability,

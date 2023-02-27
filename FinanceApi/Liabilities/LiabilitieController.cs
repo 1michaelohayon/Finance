@@ -77,9 +77,31 @@ public class LiabilitiesController : ControllerBase
   [HttpPost]
   public async Task<ActionResult<Liability>> Create(Liability liability)
   {
+    if (!HttpContext.Items.TryGetValue("UserClaims", out var userClaims))
+    {
+      return Unauthorized("User is not authenticated or authorized");
+    }
+    var claims = userClaims as List<Claim>;
+    string? userId = claims.First(c => c.Type == "sub").Value;
+    if (userId == null)
+    {
+      return Unauthorized("Something went wrong");
+    }
+
+    liability.User = userId;
+    if (liability.Recurring)
+    {
+      liability.PaymentStart = DateTime.Now;
+      liability.Active = true;
+    }
+
+
     await _liabilitiesService.CreateLiability(liability);
     return CreatedAtAction(nameof(Get), new { id = liability.Id }, liability);
   }
+
+
+
 
   [HttpPut("{id:length(24)}")]
   public async Task<IActionResult> Update(Liability liability)
@@ -142,4 +164,26 @@ public class LiabilitiesController : ControllerBase
     await _liabilitiesService.RemoveLiability(id);
     return NoContent();
   }
+
+  //endpoint deleteall liabilities/deleteall
+  [HttpDelete("deleteall")]
+  public async Task<IActionResult> DeleteAll()
+  {
+    if (!HttpContext.Items.TryGetValue("UserClaims", out var userClaims))
+    {
+      return Unauthorized("User is not authenticated or authorized");
+    }
+    var claims = userClaims as List<Claim>;
+    string? userId = claims.First(c => c.Type == "sub").Value;
+
+    await _liabilitiesService.RemoveAllLiabilities(userId);
+
+    return NoContent();
+
+  }
+
+
+
 }
+
+
