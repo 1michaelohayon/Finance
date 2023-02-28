@@ -33,7 +33,6 @@ namespace FinanceApi.Tests
         throw new Exception("AUTH0_CLIENT_SECRET is not set");
       }
 
-
       this.httpClient = httpClient;
     }
 
