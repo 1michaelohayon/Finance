@@ -104,11 +104,11 @@ public class LiabilitiesController : ControllerBase
 
 
   [HttpPut("{id:length(24)}")]
-  public async Task<IActionResult> Update(Liability liability)
+  public async Task<IActionResult> Update([FromRoute] string id, [FromBody] Liability liability)
   {
-    if (liability.Id == null)
+    if (liability.Id == null || liability.Id != id)
     {
-      return BadRequest();
+      return BadRequest("Id is null or does not match");
     }
     var liabilityFromDb = await _liabilitiesService.GetLiability(liability.Id);
     if (liabilityFromDb == null)
@@ -128,10 +128,9 @@ public class LiabilitiesController : ControllerBase
       return Unauthorized("User is not authorized to access this resource");
     }
 
-    // update function here
 
-    await _liabilitiesService.UpdateLiability(liability);
-    return NoContent();
+    var updated = await _liabilitiesService.UpdateLiability(liability, liability.Id);
+    return Ok(updated);
   }
 
 

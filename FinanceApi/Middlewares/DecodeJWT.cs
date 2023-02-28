@@ -34,7 +34,6 @@ namespace FinanceApi.Middleware
       if (token == null)
       {
         context.Response.StatusCode = 401;
-        await context.Response.WriteAsync("Invalid token");
         return;
       }
 
@@ -58,10 +57,10 @@ namespace FinanceApi.Middleware
       }
       catch (Exception ex)
       {
-        Console.WriteLine(ex);
+        Console.WriteLine("DecodeJWT ERROR: " + ex);
         context.Items["UserClaims"] = null;
         context.Response.StatusCode = 401;
-        await context.Response.WriteAsync("Invalid token");
+        await context.Response.WriteAsync("Authentication failed");
       }
     }
   }

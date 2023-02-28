@@ -8,3 +8,6 @@ mongoDB Setup:
 6. create user `db.createUser({user: "api", pwd: "sisma", roles: [{role: "readWrite", db: "Finance"}]});`
 
 7. mongodb connection string : `mongodb://api:sisma@localhost:3456`
+
+Tests command:
+dotnet test --environment AUTH0_URL="" --environment AUTH0_AUDIENCE="" --environment AUTH0_CLIENT_ID="" --environment AUTH0_CLIENT_SECRET=""

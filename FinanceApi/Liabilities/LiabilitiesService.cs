@@ -26,7 +26,6 @@ public class LiabilitiesService
 
   //get single liablity with mongodb id from the user's liabilities
   public async Task<Liability> GetLiability(string id) =>
-
     await _liabilitiesCollection.Find(liability => liability.Id == id).FirstOrDefaultAsync();
 
 
@@ -48,8 +47,20 @@ public class LiabilitiesService
 
 
   //updates liability
-  public async Task UpdateLiability(Liability liability) =>
-    await _liabilitiesCollection.ReplaceOneAsync(liability => liability.Id == liability.Id, liability);
+  public async Task<Liability> UpdateLiability(Liability liability, string id)
+  {
+    var updated = await _liabilitiesCollection.ReplaceOneAsync(liability => liability.Id == id, liability);
+
+    if (updated.IsAcknowledged)
+    {
+      return liability;
+    }
+    else
+    {
+      throw new Exception("Liability not updated");
+    }
+  }
+
 
 
   // delete liability
