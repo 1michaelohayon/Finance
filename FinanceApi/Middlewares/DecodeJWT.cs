@@ -42,17 +42,11 @@ namespace FinanceApi.Middleware
       {
         var handler = new JwtSecurityTokenHandler();
         var decodedToken = handler.ReadJwtToken(token);
-        context.Items["UserClaims"] = decodedToken.Claims.ToList();
-        Console.WriteLine("passed");
-        Console.WriteLine($"Decoded token: {decodedToken.Claims} ...");
 
-        //console write line all the claims
-        foreach (var claim in decodedToken.Claims)
-        {
-          Console.WriteLine($"Claim: {claim.Type} - {claim.Value}");
-        }
+        var userId = decodedToken.Claims.First(c => c.Type == "sub").Value;
+        context.Items["userId"] = userId;
 
-
+        Console.WriteLine("Passed Authentication");
         await _next(context);
       }
       catch (Exception ex)
