@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<FinanceDatabaseSettings>(
     builder.Configuration.GetSection("FinanceDatabase"));
 
+
 builder.Services.AddSingleton<LiabilitiesService>();
 
 builder.Services.AddControllers();

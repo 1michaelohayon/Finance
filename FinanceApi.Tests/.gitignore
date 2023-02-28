@@ -1,3 +1,5 @@
+.env
+
 # Bin and obj directories
 bin/
 obj/
